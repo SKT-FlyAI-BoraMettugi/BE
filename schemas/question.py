@@ -9,6 +9,7 @@ class QuestionCreate(BaseModel):
     type: Optional[bool] = True  # "테마 문제" 또는 "사용자가 출제한 문제"
     
     # 테마 문제에서만 필요한 필드
+    theme_id: Optional[int] = None
     stage: Optional[int] = None
     level: Optional[str] = None  # "상", "중", "하"
 
@@ -23,6 +24,7 @@ class QuestionResponse(BaseModel):
     type: bool
     title: str
     description: str
+    theme_id:  Optional[int] = None
     answer: Optional[str]
     image_url: Optional[str]
     approval_status: Optional[bool] = None

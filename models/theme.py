@@ -1,10 +1,10 @@
-from sqlalchemy import Column, String, Integer, DateTime, Enum
+from sqlalchemy import Column, String, Integer, DateTime, Enum, BigInteger
 from database.nolly import Base
 
 class Theme(Base):
     __tablename__ = 'theme'
 
-    theme_id = Column(Integer, primary_key=True, autoincrement=True, nullable=False) # 테마 번호
+    theme_id = Column(BigInteger, primary_key=True, autoincrement=True, nullable=False) # 테마 번호
     theme_name = Column(String(20), nullable=False) # 테마 이름
     theme_ex = Column(String(100), nullable=True) # 테마 설명
     profile_img = Column(String(100), nullable=False) # 프로필 이미지
