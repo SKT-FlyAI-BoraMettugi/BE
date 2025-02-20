@@ -31,7 +31,7 @@ jobs:
         echo "REDIS_URL=${{ secrets.REDIS_URL }}" >> .env
         
     - name: Generate deployment package
-      run: zip -r deploy.zip . -x '*.git*' '*.github*' 'venv/*' '__pycache__/*'*'
+      run: zip -r deploy.zip . -x '*.git*' '*.github*' 'venv/*' '__pycache__/*'
       
     - name: Deploy to AWS Elastic Beanstalk
       uses: einaregilsson/beanstalk-deploy@v21
