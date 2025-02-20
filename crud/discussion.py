@@ -12,3 +12,6 @@ def create_discussion(db: Session, user_id: int, question_id: int, discussion_da
     db.commit()
     db.refresh(new_discussion)
     return new_discussion
+
+def get_discussions_by_question(db: Session, question_id: int):
+    return db.query(Discussion).filter(Discussion.question_id == question_id).all()

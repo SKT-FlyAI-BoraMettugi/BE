@@ -7,8 +7,6 @@ class DiscussionCreate(BaseModel):
 
 class DiscussionResponse(BaseModel):
     discussion_id: int
-    question_id: int
-    user_id: int
     content: str
     like: int
     comment_exist: bool
