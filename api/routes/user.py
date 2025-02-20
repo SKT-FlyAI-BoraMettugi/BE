@@ -8,7 +8,7 @@ router = APIRouter()
 
 @router.get("/{user_id}")
 async def get_user(user_id: int, db: Session = Depends(get_db)):
-    user = get_user_info(db, user_id)
+    user = get_user_info(user_id, db)
     return user
 
 @router.patch('/nickname/{user_id}')
