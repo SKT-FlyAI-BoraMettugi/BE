@@ -40,7 +40,6 @@ async def submit_question(user_id: int, question_data: QuestionCreate, db: Sessi
     }
 
 
-
 @router.get("/{question_id}")
 async def get_question(question_id: int, db: Session = Depends(get_db)):
     question = db.query(Question).filter(Question.id == question_id).first()
@@ -49,10 +48,7 @@ async def get_question(question_id: int, db: Session = Depends(get_db)):
     if not question:
         raise HTTPException(status_code=404, detail="해당 문제를 찾을 수 없습니다.")
 
-    # JSON 응답 반환
     return {
-        "question_id": question.id,
-        "user_id": question.user_id,
         "question_type": True if question.question_type else False,
         # "theme_id": ,
         "title": question.title,
