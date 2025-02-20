@@ -4,3 +4,5 @@ python-dotenv
 pydantic
 sqlalchemy
 pymysql
+websockets
+redis
