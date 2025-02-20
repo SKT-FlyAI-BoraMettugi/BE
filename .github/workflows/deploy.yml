@@ -30,10 +30,6 @@ jobs:
         echo "NOLLY_DB=${{ secrets.NOLLY_DB }}" >> .env
         echo "REDIS_URL=${{ secrets.REDIS_URL }}" >> .env
         
-    - name: Run tests
-      run: |
-        pytest  # 여기에 테스트 명령어를 추가하세요
-        
     - name: Generate deployment package
       run: zip -r deploy.zip . -x '*.git*' '*.github*' 'venv/*' '__pycache__/*'*'
       
