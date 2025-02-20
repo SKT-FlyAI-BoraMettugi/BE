@@ -5,3 +5,5 @@ __pycache__
 *.log
 *.bin
 .idea/
+venv/
+main_my.py
