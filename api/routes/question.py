@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from database.nolly import get_db
 from crud.question import save_question
@@ -37,4 +37,33 @@ async def submit_question(user_id: int, question_data: QuestionCreate, db: Sessi
     return {
         "message": "문제 출제 완료",
         "question_id": new_question.id
+    }
+
+
+
+@router.get("/{question_id}")
+async def get_question(question_id: int, db: Session = Depends(get_db)):
+    question = db.query(Question).filter(Question.id == question_id).first()
+
+    # 문제를 찾을 수 없을 경우 
+    if not question:
+        raise HTTPException(status_code=404, detail="해당 문제를 찾을 수 없습니다.")
+
+    # JSON 응답 반환
+    return {
+        "question_id": question.id,
+        "user_id": question.user_id,
+        "question_type": True if question.question_type else False,
+        # "theme_id": ,
+        "title": question.title,
+        "question": question.question,
+        "answer": question.answer,
+        "image_url": question.image_url,
+        "is_approved": question.is_approved if not question.question_type else None,
+        "is_chosen": question.is_chosen if not question.question_type else None,
+        "is_active": question.is_active if not question.question_type else None,
+        "step": question.step if question.question_type else None,
+        "difficulty": question.difficulty if question.question_type else None,
+        "created_at": question.created_at,
+        "updated_at": question.updated_at
     }
