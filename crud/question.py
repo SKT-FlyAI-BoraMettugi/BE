@@ -18,14 +18,15 @@ def save_question(db: Session, user_id: int, question_data: QuestionCreate):
     if question_data.type:
         question.stage = question_data.stage
         question.level = question_data.level
+        question.theme_id = question.theme_id
 
     # 사용자가 출제한 문제일 경우 
     else:
-        question.is_approved = False
-        question.is_chosen = False
-        question.is_active = False
-        question.created_at = datetime.utcnow()
-        question.updated_at = datetime.utcnow()
+        question.approval_status = False
+        question.question_status = False
+        question.now_question = False
+        question.created_date = datetime.utcnow()
+        question.updated_date = datetime.utcnow()
 
     db.add(question)
     db.commit()
@@ -49,6 +50,7 @@ def get_question_detail(db: Session, question_id: int) -> QuestionResponse:
         now_question=question.now_question if not question.type else None,
         stage=question.stage if question.type else None,
         level=question.level if question.type else None,
+        theme_id=question.theme_id if question.type else None,
         created_date=question.created_date,
         updated_date=question.updated_date
     )
