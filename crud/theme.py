@@ -40,7 +40,6 @@ def get_per_theme(theme_id: int, user_id: int, db:Session) -> List[Theme_per]:
     # 2. "문제" 번호 순서대로 sort
     questions = db.query(
         Question.theme_id, # 테마 번호
-        Question.user_id, # 사용자 번호
         Question.stage # 테마 내 문제 번호
     )\
     .filter(Question.theme_id == theme_id)\
@@ -48,15 +47,17 @@ def get_per_theme(theme_id: int, user_id: int, db:Session) -> List[Theme_per]:
     .all()
 
     # 3. "답변" db와 비교해 사용자가 몇 번 문제까지 풀었는지 확인
+
     '''
+
     theme_color 구현 예정~!~
+
     '''
 
     return [
         Theme_per(
             theme_id=row[0],
-            user_id=row[1],
-            stage=row[2]
+            stage=row[1]
         )
         for row in questions # theme_color
     ]

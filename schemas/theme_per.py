@@ -3,6 +3,10 @@ from typing import Optional
 
 class Theme_per(BaseModel):
     theme_id: int
+    user_id: int
+    stage: int
+    
+    theme_id: int
     theme_name: str
 
     background_img: str
