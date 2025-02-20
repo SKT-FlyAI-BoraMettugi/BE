@@ -1,3 +1,9 @@
+import os
 import redis.asyncio as redis
+from dotenv import load_dotenv
 
-redis_client = redis.from_url("redis://nolly-valkey-e8rozm.serverless.apn2.cache.amazonaws.com:6379")
+load_dotenv()
+
+REDIS_URL = os.getenv("REDIS_URL")
+
+redis_client = redis.from_url(REDIS_URL)
