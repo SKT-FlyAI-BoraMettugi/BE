@@ -6,7 +6,7 @@ class Question(Base):
     __tablename__ = "questions"
 
     question_id = Column(BigInteger, primary_key=True, index=True, autoincrement=True, nullable=False)  # 문제 번호 
-    #theme_id = Column(BigInteger, ForeignKey("themes.id"), nullable=True)  # 테마 번호 
+    theme_id = Column(BigInteger, ForeignKey("themes.id"), nullable=True)  # 테마 번호 
     user_id = Column(BigInteger, ForeignKey("users.user_id"), nullable=True)  # 사용자 번호 
     type = Column(Boolean, nullable = False, default = True) # 문제 종류
     title = Column(String(50), nullable=False)  # 문제 제목

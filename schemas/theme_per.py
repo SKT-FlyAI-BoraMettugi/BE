@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from typing import Optional
 
 class Theme_per(BaseModel):
     theme_id: int
@@ -6,11 +7,15 @@ class Theme_per(BaseModel):
 
     background_img: str
 
-    high_succ_color: str
-    high_fail_color: str
+    # 1~4
+    high_succ_color: Optional[str] = None
+    high_fail_color: Optional[str] = None
 
-    mid_succ_color: str
-    mid_fail_color: str
+    # 5~8
+    mid_succ_color: Optional[str] = None
+    mid_fail_color: Optional[str] = None
 
-    low_succ_color: str
-    low_fail_color: str
+    # 9~12
+    low_succ_color: Optional[str] = None
+    low_fail_color: Optional[str] = None
+    
