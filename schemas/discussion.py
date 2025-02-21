@@ -15,3 +15,9 @@ class DiscussionResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+class DiscussionLikeResponse(BaseModel):
+    like: int
+
+    class Config:
+        orm_mode = True
