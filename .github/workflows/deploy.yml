@@ -1,0 +1,46 @@
+name: Deploy to AWS Elastic Beanstalk
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Create .env file
+      run: |
+        echo "AWS_USER=${{ secrets.AWS_USER }}" >> .env
+        echo "AWS_PASSWORD=${{ secrets.AWS_PASSWORD }}" >> .env
+        echo "NOLLY_HOST=${{ secrets.NOLLY_HOST }}" >> .env
+        echo "NOLLY_DB=${{ secrets.NOLLY_DB }}" >> .env
+        echo "REDIS_URL=${{ secrets.REDIS_URL }}" >> .env
+        
+    - name: Generate deployment package
+      run: zip -r deploy.zip . -x '*.git*' '*.github*' 'venv/*' '__pycache__/*'
+      
+    - name: Deploy to AWS Elastic Beanstalk
+      uses: einaregilsson/beanstalk-deploy@v21
+      with:
+        aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        application_name: Nolly
+        environment_name: Nolly-env2
+        version_label: ${{ github.sha }}
+        region: ${{ secrets.AWS_REGION }}
+        deployment_package: deploy.zip
+        wait_for_environment_recovery: 180

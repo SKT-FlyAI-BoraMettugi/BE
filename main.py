@@ -17,8 +17,8 @@ app.add_middleware(
 
 app.include_router(main.api_router)
 
-if __name__ == '__main__':
-    uvicorn.run('main:app', reload=True)
+#if __name__ == '__main__':
+    #uvicorn.run('main:app', reload=True)
 
 @app.get("/")
 async def root():
