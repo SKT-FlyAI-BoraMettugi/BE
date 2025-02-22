@@ -6,6 +6,7 @@ class DiscussionCreate(BaseModel):
     content: str
 
 class DiscussionResponse(BaseModel):
+    user_id: int
     discussion_id: int
     content: str
     like: int
