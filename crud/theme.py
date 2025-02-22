@@ -1,8 +1,7 @@
 from sqlalchemy.orm import Session
 from typing import List
 from models.theme import Theme
-from schemas.theme_list import Theme_list
-from schemas.theme_per import Theme_per
+from schemas.theme import Theme_list, Theme_per
 from models.question import Question
 from models.answer import Answer
 
@@ -118,7 +117,7 @@ def get_per_theme(theme_id: int, user_id: int, db: Session) -> List[Theme_per]:
             else:
                 low_fail_color = theme.low_fail_color
 
-        # ───────── 5) Theme_per 스키마 구성 ─────────
+        # 5) Theme_per 스키마 구성
         item = Theme_per(
             theme_id=q.theme_id,
             user_id=user_id,
