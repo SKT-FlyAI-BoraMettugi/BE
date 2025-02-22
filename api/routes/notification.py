@@ -21,6 +21,7 @@ async def websocket_endpoint(websocket: WebSocket, user_id: int):
     try:
         while True:
             data = await websocket.receive_text()
+            print(data)
             # 필요한 경우 여기서 클라이언트로부터의 메시지 처리
     except WebSocketDisconnect:
         await disconnect_websocket(user_id)
