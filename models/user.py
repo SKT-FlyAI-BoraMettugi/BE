@@ -17,6 +17,6 @@ class User(Base):
     profile_image = Column(String(100), nullable=True)
     login_channel = Column(Enum(LoginChannel), nullable=False)
     score = Column(Integer, nullable=False)
-    social_token = Column(BigInteger, nullable=False)
+    social_token = Column(String(255), nullable=False)
     created_date = Column(DateTime, server_default=func.now())
     updated_date = Column(DateTime, onupdate=func.now())
