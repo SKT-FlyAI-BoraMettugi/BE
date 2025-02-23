@@ -2,14 +2,13 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from database.nolly import get_db
 from crud.badges import find_badges_grade, update_badges
-# from schemas. import
 
 router = APIRouter()
 
 # 뱃지 등급 조회
 @router.get("/{user_id}/{theme_id}")
 async def get_badge_grade(user_id: int, theme_id: int, db: Session = Depends(get_db)):
-    badge_grade = find_badges_grade(db)
+    badge_grade = find_badges_grade(user_id, theme_id, db)
     return badge_grade
 
 # 뱃지 등급 업데이트

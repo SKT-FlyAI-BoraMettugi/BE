@@ -99,11 +99,11 @@ def get_per_theme(theme_id: int, user_id: int, db: Session) -> List[Theme_per]:
         low_fail_color = None
 
         if 1 <= stage_val <= 4:
-            # 상 난이도
+            # 하 난이도
             if is_solved:
-                high_succ_color = theme.high_succ_color
+                low_succ_color = theme.low_succ_color
             else:
-                high_fail_color = theme.high_fail_color
+                low_fail_color = theme.low_fail_color
         elif 5 <= stage_val <= 8:
             # 중 난이도
             if is_solved:
@@ -111,11 +111,11 @@ def get_per_theme(theme_id: int, user_id: int, db: Session) -> List[Theme_per]:
             else:
                 mid_fail_color = theme.mid_fail_color
         elif 9 <= stage_val <= 12:
-            # 하 난이도
+            # 상 난이도
             if is_solved:
-                low_succ_color = theme.low_succ_color
+                high_succ_color = theme.high_succ_color
             else:
-                low_fail_color = theme.low_fail_color
+                high_fail_color = theme.high_fail_color
 
         # 5) Theme_per 스키마 구성
         item = Theme_per(

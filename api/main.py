@@ -11,4 +11,4 @@ api_router.include_router(notification.router, prefix='/notification', tags=["no
 api_router.include_router(answer.router, prefix='/answer', tags=["answer"])
 api_router.include_router(discussion.router, prefix='/discussion', tags=["discussion"])
 api_router.include_router(comment.router, prefix='/comment', tags=["comment"])
-api_router.include_router(comment.router, prefix='/badges', tags=["badges"])
+api_router.include_router(badges.router, prefix='/badges', tags=["badges"])
