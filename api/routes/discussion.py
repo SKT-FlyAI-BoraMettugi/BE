@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from database.nolly import get_db
-from crud.discussion import create_discussion, get_discussions_by_question, add_like_to_discussion
+from crud.discussion import create_discussion, get_discussions_by_question, add_like_to_discussion, get_liked_discussions_by_user
 from schemas.discussion import DiscussionCreate, DiscussionResponse, DiscussionLikeResponse
+from typing import List
 
 router = APIRouter()
 
@@ -28,4 +29,13 @@ async def like_discussion(discussion_id: int, user_id: int, db: Session = Depend
     result = add_like_to_discussion(db, discussion_id, user_id)
     return result
 
+# 좋아요 누른 토론 조회
+@router.get("/like/{user_id}", response_model=List[DiscussionResponse])
+async def get_liked_discussions(user_id: int, db: Session = Depends(get_db)):
+    liked_discussions = get_liked_discussions_by_user(db, user_id)
+
+    if not liked_discussions:
+        raise HTTPException(status_code=404, detail="좋아요 누른 토론이 없습니다.")
+
+    return liked_discussions
     
