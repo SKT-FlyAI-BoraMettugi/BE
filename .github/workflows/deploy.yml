@@ -29,6 +29,8 @@ jobs:
         echo "NOLLY_HOST=${{ secrets.NOLLY_HOST }}" >> .env
         echo "NOLLY_DB=${{ secrets.NOLLY_DB }}" >> .env
         echo "REDIS_URL=${{ secrets.REDIS_URL }}" >> .env
+        echo "KAKAO_CLIENT_ID=${{ secrets.KAKAO_CLIENT_ID }}" >> .env
+        echo "KAKAO_REDIRECT_URI=${{ secrets.KAKAO_REDIRECT_URI }}" >> .env
         
     - name: Generate deployment package
       run: zip -r deploy.zip . -x '*.git*' '*.github*' 'venv/*' '__pycache__/*'
