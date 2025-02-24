@@ -21,9 +21,9 @@ app.include_router(main.api_router)
 #if __name__ == '__main__':
     #uvicorn.run('main:app', reload=True)
 
-@app.on_event("startup")
-async def startup_event():
-    start_redis_subscriber()
+#@app.on_event("startup")
+#async def startup_event():
+#    start_redis_subscriber()
 
 @app.get("/")
 async def root():
