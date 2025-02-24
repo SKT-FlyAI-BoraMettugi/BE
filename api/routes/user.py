@@ -47,9 +47,7 @@ async def kakao_login(user_id: int, request: KakaoLoginRequest, db: Session = De
     user_data = await kakao_api.get_user_info(access_token)
     kakao_id = user_data["id"]
     nickname = user_data["kakao_account"]["profile"].get("nickname", "No Nickname")
-    profile_image = user_data["kakao_account"]["profile"].get("profile_image_url", None)
-    print("저장할 닉네임: ", nickname)
-    
+    profile_image = user_data["kakao_account"]["profile"].get("profile_image_url", None)    
     # DB 업데이트 수행
     db_user = update_kakao_login(db, user_id, access_token, nickname, profile_image)
 
