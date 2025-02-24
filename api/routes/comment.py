@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from database.nolly import get_db
-from crud.comment import create_comment, add_like_to_comment
+from crud.comment import create_comment, add_like_to_comment, get_liked_comments_by_user
 from schemas.comment import CommentCreate, CommentResponse, CommentLikeResponse
 
 router = APIRouter()
@@ -17,3 +17,8 @@ async def post_comment(user_id: int, discussion_id: int, comment_data: CommentCr
 async def like_comment(comment_id: int, user_id: int, db: Session = Depends(get_db)):
     comment = add_like_to_comment(db, comment_id, user_id)
     return comment
+
+# 좋아요 누른 답글 조회
+@router.get("/like/{user_id}")
+async def get_liked_comments(user_id: int, db: Session = Depends(get_db)):
+    return get_liked_comments_by_user(db, user_id)

@@ -34,3 +34,7 @@ def add_like_to_comment(db: Session, comment_id: int, user_id: int):
     db.refresh(comment)
 
     return comment
+
+# 사용자가 좋아요 누른 답글 조회
+def get_liked_comments_by_user(db: Session, user_id: int):
+    return db.query(Comment).filter(Comment.user_id == user_id, Comment.like > 0).all()
