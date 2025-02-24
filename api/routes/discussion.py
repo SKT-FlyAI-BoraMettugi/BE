@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from database.nolly import get_db
-from crud.discussion import create_discussion, get_discussions_by_question
-from schemas.discussion import DiscussionCreate, DiscussionResponse
+from crud.discussion import create_discussion, get_discussions_by_question, add_like_to_discussion
+from schemas.discussion import DiscussionCreate, DiscussionResponse, DiscussionLikeResponse
 
 router = APIRouter()
 
@@ -21,3 +21,11 @@ async def get_discussions(question_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="해당 문제에 대한 토론이 없습니다.")
 
     return discussions
+
+# 토론 좋아요 추가
+@router.patch("/like/{discussion_id}/{user_id}", response_model=DiscussionLikeResponse)
+async def like_discussion(discussion_id: int, user_id: int, db: Session = Depends(get_db)):
+    result = add_like_to_discussion(db, discussion_id, user_id)
+    return result
+
+    

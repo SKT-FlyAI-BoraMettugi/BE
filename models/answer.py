@@ -7,7 +7,7 @@ class Answer(Base):
 
     answer_id = Column(BigInteger, primary_key=True, autoincrement=True, nullable=False)  # 답변 번호
     user_id = Column(BigInteger, ForeignKey("users.user_id"), nullable=False)  # 사용자 번호
-    question_id = Column(BigInteger, ForeignKey("questions.id"), nullable=False)  # 문제 번호 
+    question_id = Column(BigInteger, ForeignKey("questions.question_id"), nullable=False)  # 문제 번호 
     content = Column(Text, nullable=False) 
 
     # 평가 점수
