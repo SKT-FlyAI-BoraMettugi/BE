@@ -4,6 +4,7 @@ from models.user import User
 from schemas.nickname import Nickname
 from schemas.score import Score
 from datetime import datetime
+from typing import List
 
 def get_user_info(user_id: int, db: Session) -> User:
     user = db.query(User).filter(User.user_id == user_id).one()
@@ -22,6 +23,10 @@ def update_user_nickname(nickname: Nickname, db: Session) -> None:
     db.query(User).filter(User.user_id == nickname.user_id).update({"nickname": nickname.nickname})
     db.commit()
     
+# 전체 유저 조회
+def get_all_users(db: Session) -> List[User]:
+    return db.query(User).all()
+    
 # 카카오 ID로 유저 조회 
 def get_user_by_kakao_id(db: Session, kakao_id: int) -> User:
     return db.query(User).filter(User.kakao_id == kakao_id).first()
@@ -36,6 +41,7 @@ def create_user(db: Session, kakao_id: int, nickname: str, profile_image: str, a
         kakao_id=kakao_id,  # 카카오 ID 저장
         score=0,
         social_token=access_token,
+        created_date=datetime.utcnow(), 
         updated_date=datetime.utcnow()
     )
     db.add(new_user)

@@ -1,14 +1,22 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from database.nolly import get_db
-from crud.user import get_user_info, update_user_nickname, get_user_by_kakao_id, create_user, update_kakao_login, logout_kakao_user
+from crud.user import get_user_info, update_user_nickname, get_user_by_kakao_id, create_user, update_kakao_login, logout_kakao_user, get_all_users
 from schemas.nickname import Nickname
 from schemas.login import KakaoLoginRequest
+from schemas.user import UserResponse
+from typing import List
 from core.kakao_api import KakaoAPI
 import random
 
 router = APIRouter()
 kakao_api = KakaoAPI()
+
+# 전체 유저 조회
+@router.get("/all", response_model=List[UserResponse])
+async def get_all_users_api(db: Session = Depends(get_db)):
+    users = get_all_users(db)
+    return users
 
 @router.get("/{user_id}")
 async def get_user(user_id: int, db: Session = Depends(get_db)):
