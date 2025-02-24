@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from models.comment import Comment
 from schemas.comment import CommentCreate
 from datetime import datetime
+from typing import List
 
 # 답글 달기 
 def create_comment(db: Session, user_id: int, discussion_id: int, comment_data: CommentCreate):
@@ -38,3 +39,7 @@ def add_like_to_comment(db: Session, comment_id: int, user_id: int):
 # 사용자가 좋아요 누른 답글 조회
 def get_liked_comments_by_user(db: Session, user_id: int):
     return db.query(Comment).filter(Comment.user_id == user_id, Comment.like > 0).all()
+
+# 토론에 대한 모든 답글 조회
+def get_comments_by_discussion_id(db: Session, discussion_id: int) -> List[Comment]:
+    return db.query(Comment).filter(Comment.discussion_id == discussion_id).all()
