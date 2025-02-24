@@ -22,6 +22,28 @@ def update_user_nickname(nickname: Nickname, db: Session) -> None:
     db.query(User).filter(User.user_id == nickname.user_id).update({"nickname": nickname.nickname})
     db.commit()
     
+# 카카오 ID로 유저 조회 
+def get_user_by_kakao_id(db: Session, kakao_id: int) -> User:
+    return db.query(User).filter(User.kakao_id == kakao_id).first()
+
+# 신규 유저 생성 및 회원가입
+def create_user(db: Session, kakao_id: int, nickname: str, profile_image: str, access_token: str) -> User:
+    new_user = User(
+        character_id=1, 
+        nickname=nickname,
+        profile_image=profile_image if profile_image else "",
+        login_channel="KAKAO",
+        kakao_id=kakao_id,  # 카카오 ID 저장
+        score=0,
+        social_token=access_token,
+        updated_date=datetime.utcnow()
+    )
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    return new_user
+    
+# 카카오 로그인     
 def update_kakao_login(db: Session, user_id: int, access_token: str, nickname: str, profile_image: str):
     db_user = db.query(User).filter(User.user_id == user_id).first()
     
