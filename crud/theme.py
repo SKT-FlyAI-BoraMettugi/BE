@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from fastapi import HTTPException
 from typing import List
 from models.theme import Theme
 from schemas.theme import Theme_list, Theme_per
@@ -12,7 +13,8 @@ def get_themes(db: Session) -> List[Theme_list]:
         Theme.theme_id,
         Theme.theme_name,
         Theme.theme_ex, # None 허용
-        Theme.profile_img
+        Theme.profile_img,
+        Theme.background_img
     ).all()
     
     return [ # 튜플을 ThemeList로 변환
@@ -20,7 +22,8 @@ def get_themes(db: Session) -> List[Theme_list]:
             theme_id=row[0],
             theme_name=row[1],
             theme_ex=row[2],
-            profile_img=row[3]
+            profile_img=row[3],
+            background_img=row[4]
         )
         for row in themes
     ] 
@@ -46,7 +49,7 @@ def get_per_theme(theme_id: int, user_id: int, db: Session) -> List[Theme_per]:
     # 1) Theme 정보 가져오기
     theme = db.query(Theme).filter(Theme.theme_id == theme_id).one_or_none()
     if not theme:
-        return []
+        raise HTTPException(status_code=404, detail="Theme not found")
 
     # 2) 문제 리스트(stage ASC)
     questions = (
@@ -122,10 +125,8 @@ def get_per_theme(theme_id: int, user_id: int, db: Session) -> List[Theme_per]:
             theme_id=q.theme_id,
             user_id=user_id,
             stage=stage_val,
-
             theme_name=theme.theme_name,
-            background_img=theme.background_img,
-
+            question_id=q.question_id,
             high_succ_color=high_succ_color,
             high_fail_color=high_fail_color,
             mid_succ_color=mid_succ_color,
