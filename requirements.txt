@@ -8,3 +8,7 @@ pymysql
 websockets
 redis
 httpx
+torch
+minio
+boto3
+dotenv
