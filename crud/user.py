@@ -54,8 +54,9 @@ def create_user(db: Session, kakao_id: int, nickname: str, profile_image: str, a
 def update_kakao_login(db: Session, user_id: int, access_token: str, nickname: str, profile_image: str):
     db_user = db.query(User).filter(User.user_id == user_id).first()
     
-    print("db 업데이트 전 access token: ", access_token)
-    db_user.social_token = access_token if access_token else "INVALID TOKEN"
+    if access_token:  # 액세스 토큰이 있을 경우에만 업데이트
+        db_user.social_token = access_token
+        
     db_user.login_channel = "KAKAO"
     db_user.nickname = nickname
     db_user.profile_image = profile_image
@@ -63,8 +64,6 @@ def update_kakao_login(db: Session, user_id: int, access_token: str, nickname: s
 
     db.commit()
     db.refresh(db_user)
-    
-    print("db에 저장된 social_token:", db_user.social_token)
     return db_user
 
 # 카카오 로그아웃 

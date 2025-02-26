@@ -41,7 +41,6 @@ async def kakao_callback(code: str):
 # 프론트에서 code 보냄
 @router.patch("/login")
 async def kakao_login(request: KakaoLoginRequest, db: Session = Depends(get_db)):
-    # 프론트에서 받은 데이터를 바로 사용
     kakao_id = request.kakao_id
     nickname = request.nickname
     profile_image = request.profile_img
@@ -50,11 +49,13 @@ async def kakao_login(request: KakaoLoginRequest, db: Session = Depends(get_db))
     user = get_user_by_kakao_id(db, kakao_id)
 
     if user:
+        # 기존 유저: 로그인 처리 
         update_kakao_login(db, user.user_id, None, nickname, profile_image)
         return {"message": "카카오 로그인 성공", "user_id": user.user_id, "nickname": nickname}
 
     # 신규 유저: 회원가입 후 로그인 처리
     new_user = create_user(db, kakao_id, nickname, profile_image, None)
+
     return {"message": "회원가입 및 로그인 성공", "user_id": new_user.user_id, "nickname": nickname}
 
 # 카카오 로그아웃
