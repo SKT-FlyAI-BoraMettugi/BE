@@ -5,6 +5,7 @@ from schemas.nickname import Nickname
 from schemas.score import Score
 from datetime import datetime
 from typing import List
+import random 
 
 def get_user_info(user_id: int, db: Session) -> User:
     user = db.query(User).filter(User.user_id == user_id).one()
@@ -34,7 +35,7 @@ def get_user_by_kakao_id(db: Session, kakao_id: int) -> User:
 # 신규 유저 생성 및 회원가입
 def create_user(db: Session, kakao_id: int, nickname: str, profile_image: str, access_token: str) -> User:
     new_user = User(
-        character_id=1, 
+        character_id=random.randint(1, 3), 
         nickname=nickname,
         profile_image=profile_image if profile_image else "",
         login_channel="KAKAO",
