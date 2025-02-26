@@ -28,16 +28,6 @@ async def update_nickname(nickname: Nickname, db: Session = Depends(get_db)):
     update_user_nickname(nickname, db)
     return nickname
 
-# 카카오 로그인 url 반환
-@router.get("/auth/kakao/login-url")
-def get_kakao_login_url():
-    return {"login_url": kakao_api.get_auth_url()}
-
-# 카카오 로그인 후 받은 code를 JSON으로 반환
-@router.get("/auth/kakao/callback")
-async def kakao_callback(code: str):
-    return {"code": code}
-
 # 프론트에서 code 보냄
 @router.patch("/login")
 async def kakao_login(request: KakaoLoginRequest, db: Session = Depends(get_db)):
