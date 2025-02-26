@@ -13,3 +13,10 @@ class Discussion(Base):
     comment_exist = Column(Boolean, default=False, nullable=False)
     created_date = Column(DateTime, server_default=func.now(), nullable=False)
     updated_date = Column(DateTime, onupdate=func.now(), nullable=True)
+
+class DiscussionLike(Base):
+    __tablename__ = "discussion_likes"
+
+    discussion_likes_id = Column(BigInteger, primary_key=True, autoincrement=True)
+    discussion_id = Column(BigInteger, ForeignKey("discussions.discussion_id"), nullable=False)
+    user_id = Column(BigInteger, ForeignKey("users.user_id"), nullable=False)
