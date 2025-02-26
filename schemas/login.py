@@ -1,4 +1,6 @@
 from pydantic import BaseModel
 
 class KakaoLoginRequest(BaseModel):
-    code: str
+    kakao_id: int
+    nickname: str
+    profile_img: str
