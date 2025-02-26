@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from api.routes import user, ranking, question, theme, notification, answer, discussion, comment, badges, download_model
+from api.routes import user, ranking, question, theme, notification, answer, discussion, comment, badges
 
 api_router = APIRouter()
 
@@ -12,4 +12,3 @@ api_router.include_router(answer.router, prefix='/answer', tags=["answer"])
 api_router.include_router(discussion.router, prefix='/discussion', tags=["discussion"])
 api_router.include_router(comment.router, prefix='/comment', tags=["comment"])
 api_router.include_router(badges.router, prefix='/badges', tags=["badges"])
-api_router.include_router(download_model.router, prefix='/download_model', tags=["download_model"])
