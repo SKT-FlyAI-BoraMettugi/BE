@@ -18,6 +18,6 @@ class User(Base):
     login_channel = Column(Enum(LoginChannel), nullable=True)
     kakao_id = Column(BigInteger, unique=True, nullable=False)
     score = Column(Integer, nullable=False)
-    social_token = Column(String(255), nullable=False)
+    social_token = Column(String(255), nullable=True)
     created_date = Column(DateTime, server_default=func.now())
     updated_date = Column(DateTime, onupdate=func.now())

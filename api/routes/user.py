@@ -28,43 +28,23 @@ async def update_nickname(nickname: Nickname, db: Session = Depends(get_db)):
     update_user_nickname(nickname, db)
     return nickname
 
-# 카카오 로그인 url 반환
-@router.get("/auth/kakao/login-url")
-def get_kakao_login_url():
-    return {"login_url": kakao_api.get_auth_url()}
-
-# 카카오 로그인 후 받은 code를 JSON으로 반환
-@router.get("/auth/kakao/callback")
-async def kakao_callback(code: str):
-    return {"code": code}
-
 # 프론트에서 code 보냄
 @router.patch("/login")
 async def kakao_login(request: KakaoLoginRequest, db: Session = Depends(get_db)):
-    
-    # 카카오 액세스 토큰 요청
-    token_data = await kakao_api.get_access_token(request.code)
-    access_token = token_data.get("access_token")
-
-    if not access_token:
-        raise HTTPException(status_code=400, detail="카카오 액세스 토큰 발급 실패")
-
-    # 카카오 유저 정보 요청
-    user_data = await kakao_api.get_user_info(access_token)
-    kakao_id = user_data["id"]
-    nickname = user_data["kakao_account"]["profile"].get("nickname", f"카카오유저{random.randint(1000, 9999)}")
-    profile_image = user_data["kakao_account"]["profile"].get("profile_image_url", None)
+    kakao_id = request.kakao_id
+    nickname = request.nickname
+    profile_image = request.profile_img
 
     # DB에서 기존 유저 확인
     user = get_user_by_kakao_id(db, kakao_id)
 
     if user:
-        # 기존 유저: 로그인 처리
-        update_kakao_login(db, user.user_id, access_token, nickname, profile_image)
+        # 기존 유저: 로그인 처리 
+        update_kakao_login(db, user.user_id, None, nickname, profile_image)
         return {"message": "카카오 로그인 성공", "user_id": user.user_id, "nickname": nickname}
-    
+
     # 신규 유저: 회원가입 후 로그인 처리
-    new_user = create_user(db, kakao_id, nickname, profile_image, access_token)
+    new_user = create_user(db, kakao_id, nickname, profile_image, None)
 
     return {"message": "회원가입 및 로그인 성공", "user_id": new_user.user_id, "nickname": nickname}
 
