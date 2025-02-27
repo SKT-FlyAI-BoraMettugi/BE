@@ -31,6 +31,11 @@ jobs:
         echo "REDIS_URL=${{ secrets.REDIS_URL }}" >> .env
         echo "KAKAO_CLIENT_ID=${{ secrets.KAKAO_CLIENT_ID }}" >> .env
         echo "KAKAO_REDIRECT_URI=${{ secrets.KAKAO_REDIRECT_URI }}" >> .env
+        echo "MINIO_USER=${{ secrets.MINIO_USER }}" >> .env
+        echo "MINIO_PASSWORD=${{ secrets.MINIO_PASSWORD }}" >> .env
+        echo "MINIO_HOST=${{ secrets.MINIO_HOST }}" >> .env
+        echo "S3_BUCKET_NAME=${{ secrets.S3_BUCKET_NAME }}" >> .env
+        
         
     - name: Generate deployment package
       run: zip -r deploy.zip . -x '*.git*' '*.github*' 'venv/*' '__pycache__/*'
