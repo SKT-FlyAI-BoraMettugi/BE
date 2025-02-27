@@ -14,3 +14,4 @@ dotenv
 transformers
 safetensors
 peft
+torch
