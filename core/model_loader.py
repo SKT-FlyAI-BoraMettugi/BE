@@ -8,13 +8,13 @@ MODEL_PATH = "downloaded_model"
 
 def load_tokenizer():
     # Tokenizer 로드
-    tokenizer = AutoTokenizer.from_pretrained(f"{MODEL_PATH}/tokenizer.json", use_fast=True)
+    tokenizer = AutoTokenizer.from_pretrained(f"{MODEL_PATH}/tokenizer.json", local_files_only=True, use_fast=True)
     
     return tokenizer
 
 def load_model():
     # Config 로드
-    config = AutoConfig.from_pretrained(f"{MODEL_PATH}/config.json") 
+    config = AutoConfig.from_pretrained(f"{MODEL_PATH}/config.json", local_files_only=True) 
 
     # 모델 생성 (AutoModelForCausalLM, AutoModelForSequenceClassification 등 선택)
     model = AutoModel.from_config(config)
@@ -31,7 +31,7 @@ def load_model():
     model.eval() # 모델 평가 모드로 설정
 
     # Adapter 설정 로드
-    adapter_config = PeftConfig.from_pretrained(f"{MODEL_PATH}/adapter_config.json")
+    adapter_config = PeftConfig.from_pretrained(f"{MODEL_PATH}/adapter_config.json", local_files_only=True)
 
     # Adapter 적용
     model = PeftModel(model, adapter_config)

@@ -46,26 +46,49 @@ async def grade_answers(
     scores = outputs["scores"].tolist()  # [창의, 논리, 사고, 설득, 깊이]
     reviews = outputs["explanations"]  # ["창의성 설명", "논리 설명", ...]
 
-    # 5. DB에 저장
-    new_answer = Answer(
-        user_id=user_id,
-        question_id=question_id,
-        content=input_text,
-        creativity=scores[0],
-        logic=scores[1],
-        thinking=scores[2],
-        persuasion=scores[3],
-        depth=scores[4],
-        creativity_review=reviews[0],
-        logic_review=reviews[1],
-        thinking_review=reviews[2],
-        persuasion_review=reviews[3],
-        depth_review=reviews[4],
-        total_score= (creativity + logic + thinking + persuasion + depth)/5
-    )
+    total_score = sum(scores) / len(scores) if scores else 0
 
-    db.add(new_answer)
+    # 5. DB에 저장 : 기존 답변 O (값 update), X (db에 새로 add)
+    existing_answer = db.query(Answer).filter(
+        Answer.user_id == user_id, 
+        Answer.question_id == question_id
+    ).first()
+
+    if existing_answer:
+        # 기존 데이터가 있으면 업데이트
+        existing_answer.content = input_text
+        existing_answer.creativity = scores[0]
+        existing_answer.logic = scores[1]
+        existing_answer.thinking = scores[2]
+        existing_answer.persuasion = scores[3]
+        existing_answer.depth = scores[4]
+        existing_answer.creativity_review = reviews[0]
+        existing_answer.logic_review = reviews[1]
+        existing_answer.thinking_review = reviews[2]
+        existing_answer.persuasion_review = reviews[3]
+        existing_answer.depth_review = reviews[4]
+        existing_answer.total_score = total_score
+    else:
+        # 기존 데이터가 없으면 새로 추가
+        new_answer = Answer(
+            user_id=user_id,
+            question_id=question_id,
+            content=input_text,
+            creativity=scores[0],
+            logic=scores[1],
+            thinking=scores[2],
+            persuasion=scores[3],
+            depth=scores[4],
+            creativity_review=reviews[0],
+            logic_review=reviews[1],
+            thinking_review=reviews[2],
+            persuasion_review=reviews[3],
+            depth_review=reviews[4],
+            total_score=total_score
+        )
+        db.add(new_answer)
+
+    # DB 반영
     db.commit()
-    db.refresh(new_answer)
 
     return  # 응답 없이 종료 / FastAPI는 자동으로 200 OK 반환
