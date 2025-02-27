@@ -12,3 +12,6 @@ torch
 minio
 boto3
 dotenv
+transformers
+safetensors
+peft

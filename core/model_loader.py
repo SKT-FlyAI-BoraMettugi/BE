@@ -1,26 +1,42 @@
 import os
 import torch
-from config import minio_client, bucket_name
+from transformers import AutoModel, AutoTokenizer, AutoConfig
+from safetensors.torch import load_file
+from peft import PeftModel, PeftConfig
 
-MODEL_PATH = "models/llama_model.safetensors"
+MODEL_PATH = "downloaded_model"
 
-# 모델 다운로드 함수
-def download_model():
-    """MinIO에서 모델을 다운로드하여 로컬에 저장"""
-    if not os.path.exists(MODEL_PATH):
-        print("Downloading model from MinIO...")
-        minio_client.fget_object(bucket_name, "llama/finetuned_model.safetensors", MODEL_PATH)
-        print("Model downloaded.")
+def load_tokenizer():
+    # Tokenizer 로드
+    tokenizer = AutoTokenizer.from_pretrained(f"{MODEL_PATH}/tokenizer.json", use_fast=True)
+    
+    return tokenizer
 
-# 모델 로드 함수
 def load_model():
-    """모델을 로드하고 FastAPI에서 사용 가능하게 설정"""
-    download_model()  # MinIO에서 모델 다운로드
-    print("Loading Llama model...")
-    model = torch.load(MODEL_PATH, map_location="cpu")  # CPU 또는 GPU로 로드
-    model.eval()  # 모델을 평가 모드로 설정
-    print("Model loaded successfully!")
+    # Config 로드
+    config = AutoConfig.from_pretrained(f"{MODEL_PATH}/config.json") 
+
+    # 모델 생성 (AutoModelForCausalLM, AutoModelForSequenceClassification 등 선택)
+    model = AutoModel.from_config(config)
+
+    # .safetensors 로드
+    weights = load_file(f"{MODEL_PATH}/model.safetensors") # 파일명 확인
+
+    # 모델에 가중치 적용
+    model.load_state_dict(weights, strict=False)
+
+    # # 모델을 GPU로 이동 (선택)
+    # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    # model.to(device)
+    model.eval() # 모델 평가 모드로 설정
+
+    # Adapter 설정 로드
+    adapter_config = PeftConfig.from_pretrained(f"{MODEL_PATH}/adapter_config.json")
+
+    # Adapter 적용
+    model = PeftModel(model, adapter_config)
+
     return model
 
-# 모델 로드
-llama_model = load_model()
+# # 모델 로드
+# llama_model = load_model()

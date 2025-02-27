@@ -2,7 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from database.nolly import get_db
 from crud.answer import get_answer_history, get_answer_scores
-from schemas.answer import AnswerResponse, AnswerScoreResponse
+from schemas.answer import AnswerResponse, AnswerScoreResponse, AnswerSubmit
+from crud.model_inference import get_tokenizer, get_model # , get_device
 
 router = APIRouter()
 
@@ -23,3 +24,48 @@ async def get_answer_scores_api(user_id: int, question_id: int, db: Session = De
         raise HTTPException(status_code=404, detail="채점 결과를 찾을 수 없습니다.")
 
     return answer_scores
+
+# 문제 답안 제출 == 채점
+@router.post("/{user_id}/{question_id}")
+async def grade_answers(
+    user_id: int, question_id: int, 
+    answer_data: AnswerSubmit, tokenizer = Depends(get_tokenizer), model = Depends(get_model), 
+    db: Session = Depends(get_db) # device: str = Depends(get_device), 
+):
+    
+    # 1. 사용자 답변 불러오기
+    input_text = answer_data.answer
+    # 2. 모델에 넣을 수 있도록 토큰화 ########################## pt 맞는지 확인 ###
+    inputs = tokenizer(input_text, return_tensors="pt") 
+
+    # 3. 모델 추론 수행
+    with torch.no_grad():
+        outputs = model(**inputs)
+
+    # 4. 모델 결과 가공 ########################## 실제 결과에 맞게 수정 필요 ###
+    scores = outputs["scores"].tolist()  # [창의, 논리, 사고, 설득, 깊이]
+    reviews = outputs["explanations"]  # ["창의성 설명", "논리 설명", ...]
+
+    # 5. DB에 저장
+    new_answer = Answer(
+        user_id=user_id,
+        question_id=question_id,
+        content=input_text,
+        creativity=scores[0],
+        logic=scores[1],
+        thinking=scores[2],
+        persuasion=scores[3],
+        depth=scores[4],
+        creativity_review=reviews[0],
+        logic_review=reviews[1],
+        thinking_review=reviews[2],
+        persuasion_review=reviews[3],
+        depth_review=reviews[4],
+        total_score= (creativity + logic + thinking + persuasion + depth)/5
+    )
+
+    db.add(new_answer)
+    db.commit()
+    db.refresh(new_answer)
+
+    return  # 응답 없이 종료 / FastAPI는 자동으로 200 OK 반환
