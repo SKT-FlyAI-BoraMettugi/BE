@@ -6,6 +6,7 @@ class CommentCreate(BaseModel):
     content: str
 
 class CommentResponse(BaseModel):
+    user_id: int
     comment_id: int
     content: str
     like: int
