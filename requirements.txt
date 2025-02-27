@@ -15,3 +15,5 @@ transformers
 safetensors
 peft
 torch
+bitsandbytes
+accelerate

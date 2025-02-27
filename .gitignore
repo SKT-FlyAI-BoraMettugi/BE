@@ -8,3 +8,4 @@ __pycache__
 venv/
 main_my.py
 test_download/
+downloaded_model/

@@ -4,8 +4,9 @@ from api import main
 from starlette.middleware.cors import CORSMiddleware
 from core.redis_subscriber import start_redis_subscriber
 from core.minio_service import download_model_from_minio # 모델 파일 다운로드
-from core.model_loader import load_tokenizer, load_model # tokenizer, 모델 로드
+from core.model_loader import load_model # load_tokenizer, tokenizer, 모델 로드
 import os
+
 # import torch
 
 app = FastAPI()
@@ -26,11 +27,7 @@ app.include_router(main.api_router)
 @app.on_event("startup")
 async def cache_model():
     download_model_from_minio(f"", "downloaded_model") # MODEL_PATH : 어제 test 시 "test_download" 사용
-    app.state.tokenizer = load_tokenizer()
-    app.state.model = load_model()
-    # device = torch.device("cpu")
-    # app.state.device = device
-    # app.state.model.to(device)
+    app.state.model, app.state.tokenizer = load_model()
 
 #if __name__ == '__main__':
     #uvicorn.run('main:app', reload=True)
