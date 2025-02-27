@@ -30,7 +30,7 @@ async def get_answer_scores_api(user_id: int, question_id: int, db: Session = De
 
     return answer_scores
 
-@router.post("/{user_id}/{question_id}")
+@router.post("grade/{user_id}/{question_id}")
 async def grade_answers(
     user_id: int, question_id: int, 
     answer_data: AnswerSubmit, tokenizer = Depends(get_tokenizer), model = Depends(get_model), 
