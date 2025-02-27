@@ -8,7 +8,6 @@ pymysql
 websockets
 redis
 httpx
-torch --index-url https://download.pytorch.org/whl/cpu
 minio
 boto3
 dotenv
