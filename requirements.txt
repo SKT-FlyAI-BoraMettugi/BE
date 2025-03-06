@@ -8,3 +8,12 @@ pymysql
 websockets
 redis
 httpx
+minio
+boto3
+dotenv
+transformers
+safetensors
+peft
+torch --extra-index-url https://download.pytorch.org/whl/cpu
+bitsandbytes
+accelerate

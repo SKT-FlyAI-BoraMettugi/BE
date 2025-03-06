@@ -25,3 +25,7 @@ class AnswerScoreResponse(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class AnswerSubmit(BaseModel):
+    answer: str  # 사용자가 제출하는 답변

@@ -22,3 +22,5 @@ async def get_question(question_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="해당 문제를 찾을 수 없습니다.")
     
     return question
+
+
