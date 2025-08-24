@@ -1,6 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 from database.nolly import get_db
+from core.notification import post_comment_notification, like_comment_notification
 from crud.comment import create_comment, add_like_to_comment, get_liked_comments_by_user, get_comments_by_discussion_id
 from schemas.comment import CommentCreate, CommentResponse, CommentLikeResponse
 from typing import List
@@ -9,14 +10,23 @@ router = APIRouter()
 
 # 토론에 대한 답글 생성
 @router.post("/{user_id}/{discussion_id}", response_model=CommentResponse)
-async def post_comment(user_id: int, discussion_id: int, comment_data: CommentCreate, db: Session = Depends(get_db)):
+async def post_comment(user_id: int, discussion_id: int, comment_data: CommentCreate, request: Request, db: Session = Depends(get_db)):
     comment = create_comment(db, user_id, discussion_id, comment_data)
+    try:
+        await post_comment_notification(user_id, discussion_id, comment_data, request, db)
+    except Exception as e:
+        print(f"Notification failed: {e}")
     return comment
 
 # 답글 좋아요
 @router.patch("/like/{comment_id}/{user_id}", response_model=CommentLikeResponse)
-async def like_comment(comment_id: int, user_id: int, db: Session = Depends(get_db)):
+async def like_comment(comment_id: int, user_id: int, request: Request, db: Session = Depends(get_db)):
     comment = add_like_to_comment(db, comment_id, user_id)
+    try:
+        await like_comment_notification(comment_id, user_id, request, db)
+    except Exception as e:
+        print(f"Notification failed: {e}")
+
     return comment
 
 # 좋아요 누른 답글 조회

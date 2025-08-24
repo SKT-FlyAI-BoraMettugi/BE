@@ -7,6 +7,7 @@ class Notification(Base):
 
     notification_id = Column(BigInteger, primary_key=True, autoincrement=True)
     user_id = Column(BigInteger, ForeignKey("users.user_id"), nullable=False)
-    comment_id = Column(BigInteger, nullable=False)
+    discussion_id = Column(BigInteger, nullable=True)
+    comment_id = Column(BigInteger, nullable=True)
     content = Column(String(100), nullable=False)
     created_date = Column(DateTime, server_default=func.now())

@@ -1,6 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 from database.nolly import get_db
+from core.notification import like_discussion_notification
 from crud.discussion import create_discussion, get_discussions_by_question, add_like_to_discussion, get_liked_discussions_by_user
 from schemas.discussion import DiscussionCreate, DiscussionResponse, DiscussionLikeResponse
 from typing import List
@@ -25,8 +26,13 @@ async def get_discussions(question_id: int, db: Session = Depends(get_db)):
 
 # 토론 좋아요 추가
 @router.patch("/like/{discussion_id}/{user_id}", response_model=DiscussionLikeResponse)
-async def like_discussion(discussion_id: int, user_id: int, db: Session = Depends(get_db)):
+async def like_discussion(discussion_id: int, user_id: int, request: Request, db: Session = Depends(get_db)):
     result = add_like_to_discussion(db, discussion_id, user_id)
+    try:
+        await like_discussion_notification(user_id, discussion_id, request, db)
+    except Exception as e:
+        print(f"Notification failed: {e}")
+    
     return result
 
 # 좋아요 누른 토론 조회
