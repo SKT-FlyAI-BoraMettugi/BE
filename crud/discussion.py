@@ -3,6 +3,7 @@ from models.discussion import Discussion, DiscussionLike
 from schemas.discussion import DiscussionCreate, DiscussionLikeResponse
 from typing import List
 
+# 토론 생성
 def create_discussion(db: Session, user_id: int, question_id: int, discussion_data: DiscussionCreate):
     new_discussion = Discussion(
         user_id=user_id,
@@ -13,6 +14,10 @@ def create_discussion(db: Session, user_id: int, question_id: int, discussion_da
     db.commit()
     db.refresh(new_discussion)
     return new_discussion
+
+# 토론 정보 조회
+def get_discussion(db: Session, discussion_id: int) -> Discussion:
+    return db.query(Discussion).filter(Discussion.discussion_id == discussion_id).first()
 
 def get_discussions_by_question(db: Session, question_id: int):
     return db.query(Discussion).filter(Discussion.question_id == question_id).all()

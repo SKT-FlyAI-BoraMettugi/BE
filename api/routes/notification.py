@@ -1,27 +1,29 @@
-from fastapi import APIRouter, Depends, BackgroundTasks, WebSocket
-from sqlalchemy.orm import Session
-from database.nolly import get_db
-from schemas.notification import Notification
-from core.notification import create_and_send_notification
+import json
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 
 router = APIRouter()
 
-@router.post("/{comment_id}")
-async def create_notification(notification: Notification, backgroundtasks: BackgroundTasks, db: Session = Depends(get_db)):
-    # 여기에 알림 생성 로직 추가 (예: DB에 저장)
-
-    # 백그라운드에서 알림 전송
-    backgroundtasks.add_task(create_and_send_notification, notification)
-
-    return {"status": "Notification created and sent"}
-
+# WebSocket 연결
 @router.websocket("/ws/{user_id}")
 async def websocket_endpoint(websocket: WebSocket, user_id: int):
-    await connect_websocket(user_id, websocket)
+    redis = websocket.app.state.redis
+    await websocket.accept()
+
+    pubsub = redis.pubsub()
+    await pubsub.subscribe(f"user:{user_id}")
+
     try:
-        while True:
-            data = await websocket.receive_text()
-            print(data)
-            # 필요한 경우 여기서 클라이언트로부터의 메시지 처리
+        async for message in pubsub.listen():
+            if message["type"] == "message":
+                try:
+                    data = json.loads(message["data"])
+                    await websocket.send_text(json.dumps(data, ensure_ascii=False))
+                except json.JSONDecodeError as e:
+                    print(f"JSON decode error: {e}")
     except WebSocketDisconnect:
-        await disconnect_websocket(user_id)
+        print(f"WebSocket disconnected: user={user_id}")
+    except Exception as e:
+        print(f"Unexpected error: {e}")
+    finally:
+        await pubsub.unsubscribe(f"user:{user_id}")
+        await pubsub.close()

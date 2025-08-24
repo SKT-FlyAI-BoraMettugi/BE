@@ -18,9 +18,13 @@ def create_comment(db: Session, user_id: int, discussion_id: int, comment_data: 
     db.refresh(new_comment)
     return new_comment
 
+# 답글 정보 조회
+def get_comment(db: Session, comment_id: int) -> Comment:
+    return db.query(Comment).filter(Comment.comment_id == comment_id).first()
+
 # 답글 좋아요
 def add_like_to_comment(db: Session, comment_id: int, user_id: int):
-    comment = db.query(Comment).filter(Comment.comment_id == comment_id).first()
+    comment = get_comment(db, comment_id)
 
     # 사용자가 이미 좋아요를 눌렀는지 확인
     existing_like = db.query(CommentLike).filter(
